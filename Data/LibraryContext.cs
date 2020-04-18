@@ -43,6 +43,7 @@ namespace Library.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS;Database=Project07;Integrated Security = true;");
+            optionsBuilder.UseLazyLoadingProxies(); // doesn't load unnecessary info
         }
     }
 }

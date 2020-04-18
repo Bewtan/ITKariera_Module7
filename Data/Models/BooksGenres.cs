@@ -4,11 +4,11 @@ using System.Text;
 
 namespace Library.Data.Models
 {
-    class BooksGenres
+    public class BooksGenres
     {
         public int GenreId { get; set; }
-        public Genre Genre { get; set; }
+        public virtual Genre Genre { get; set; }
         public int BookId { get; set; }
-        public Book Book { get; set; }
+        public virtual Book Book { get; set; }
     }
 }
