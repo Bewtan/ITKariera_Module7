@@ -70,7 +70,7 @@ namespace Library.Business
                         book.Client = client; //Idk if this is needed
                         book.IsAvailable = false;
                         book.DateOfBorrow = DateTime.Today;
-                        book.DateOfReturn = book.DateOfBorrow.AddMonths(2); // 2 month return time
+                        book.DateOfReturn = ((DateTime)(book.DateOfBorrow)).AddMonths(2); // 2 month return time ; Converting to Datetime because Datatime? doesn't have a definition of .AddMonths()
                         bookBusiness.Update(book);
                     }
                     else

@@ -95,7 +95,7 @@ namespace Library.Business
         /// </summary>
         /// <param name="title"></param>
         /// <returns></returns>
-        public DateTime GetReturnDate(string title)
+        public DateTime? GetReturnDate(string title)
         {
             using (libraryContext = new LibraryContext())
             {
