@@ -6,9 +6,18 @@ using System.Linq;
 using System.Text;
 namespace Library.Business
 {
-    class GenreBusiness
+    public class GenreBusiness
     {
         private LibraryContext libraryContext;
+
+        public GenreBusiness(LibraryContext context)
+        {
+            libraryContext = context;
+        }
+        public GenreBusiness()
+        {
+            libraryContext = new LibraryContext();
+        }
         /// <summary>
         /// Returns a genre by name.
         /// </summary>
@@ -16,7 +25,7 @@ namespace Library.Business
         /// <returns></returns>
         public Genre Get(string name)
         {
-            using (libraryContext = new LibraryContext())
+            using (libraryContext)
             {
                 return libraryContext.Genres.SingleOrDefault(genre => genre.Name == name);
             }
@@ -27,7 +36,7 @@ namespace Library.Business
         /// <param name="genre"></param>
         public void Add(Genre genre)
         {
-            using (libraryContext = new LibraryContext())
+            using (libraryContext)
             {
                 libraryContext.Genres.Add(genre);
                 libraryContext.SaveChanges();
@@ -39,7 +48,7 @@ namespace Library.Business
         /// <param name="name"></param>
         public void Delete(string name)
         {
-            using (libraryContext = new LibraryContext())
+            using (libraryContext)
             {
                 var genre = this.Get(name);
                 if (genre != null)

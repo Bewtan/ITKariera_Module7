@@ -7,10 +7,20 @@ using System.Text;
 
 namespace Library.Business
 {
-    class ClientBusiness
+    public class ClientBusiness
     {
         private LibraryContext libraryContext;
-        private BookBusiness bookBusiness = new BookBusiness();
+        private BookBusiness bookBusiness;
+        public ClientBusiness(LibraryContext context)
+        {
+            libraryContext = context;
+            bookBusiness = new BookBusiness(context);
+        }
+        public ClientBusiness()
+        {
+            libraryContext = new LibraryContext();
+            bookBusiness = new BookBusiness();
+        }
 
         /// <summary>
         /// Returns a client by id.
@@ -19,7 +29,7 @@ namespace Library.Business
         /// <returns></returns>
         public Client Get(int id)
         {
-            using (libraryContext = new LibraryContext())
+            using (libraryContext)
             {
                 return libraryContext.Clients.Find(id);
             }
@@ -30,7 +40,7 @@ namespace Library.Business
         /// <param name="id"></param>
         public void Delete(int id)
         {
-            using (libraryContext = new LibraryContext())
+            using (libraryContext)
             {
                 var client = this.Get(id);
                 if (client != null)
@@ -46,7 +56,7 @@ namespace Library.Business
         /// <param name="client"></param>
         public void Add(Client client)
         {
-            using (libraryContext = new LibraryContext())
+            using (libraryContext)
             {
                 libraryContext.Clients.Add(client);
                 libraryContext.SaveChanges();
@@ -58,16 +68,16 @@ namespace Library.Business
         /// <param name="clientId"></param>
         /// <param name="books"></param>
         public void BorrowBooks(int clientId, string[] books) {
-            using (libraryContext = new LibraryContext())
+
+            using (libraryContext)
             {
                 var client = this.Get(clientId);
-                foreach(string bookName in books)
+                foreach (string bookName in books)
                 {
                     var book = bookBusiness.Get(bookName);
                     if (book.IsAvailable == true)
                     {
                         book.ClientId = clientId;
-                        book.Client = client; //Idk if this is needed
                         book.IsAvailable = false;
                         book.DateOfBorrow = DateTime.Today;
                         book.DateOfReturn = ((DateTime)(book.DateOfBorrow)).AddMonths(2); // 2 month return time ; Converting to Datetime because Datatime? doesn't have a definition of .AddMonths()
@@ -84,7 +94,7 @@ namespace Library.Business
         /// <param name="clientId"></param>
         /// <param name="books"></param>
         public void ReturnBooks(int clientId, string[] books) {
-            using (libraryContext = new LibraryContext())
+            using (libraryContext)
             {
                 var client = this.Get(clientId);
                 foreach (string bookName in books)
@@ -94,8 +104,7 @@ namespace Library.Business
                         client.Strikes++;
                     if (book.ClientId == clientId)
                     {
-                        book.ClientId = 0;
-                        book.Client = null; //Idk if this is needed
+                        book.ClientId = null;
                         book.IsAvailable = true;
                         book.DateOfBorrow = default;
                         book.DateOfReturn = default;
@@ -114,7 +123,7 @@ namespace Library.Business
         /// <param name="client"></param>
         public void Update(Client client)
         {
-            using (libraryContext = new LibraryContext())
+            using (libraryContext)
             {
                 var clientOld = this.Get(client.Id);
                 if (clientOld != null)
@@ -130,9 +139,9 @@ namespace Library.Business
         /// <param name="clientId"></param>
         /// <returns></returns>
         public List<Book> GetBorrowedBooks(int clientId) {
-            using (libraryContext = new LibraryContext())
+            using (libraryContext)
             {
-                return bookBusiness.GetAll().Where(book => book.ClientId == clientId).ToList();
+                return libraryContext.Books.Where(book => book.ClientId == clientId).ToList();
             }
         }
         /// <summary>
@@ -142,19 +151,20 @@ namespace Library.Business
         /// <returns></returns>
         public Book EarliestReturnDate(int clientId) //Maybe not that useful.
         {
-            using (libraryContext = new LibraryContext())
+            using (libraryContext)
             {
                 List<Book> borrowedBooks = this.GetBorrowedBooks(clientId);
-                Book earliestReturnDate = new Book();
-                earliestReturnDate.DateOfReturn = DateTime.MaxValue;
+                Book bookWithEarliestReturnDate = new Book();
+                bookWithEarliestReturnDate.DateOfReturn = DateTime.MaxValue;
                 foreach(Book book in borrowedBooks)
                 {
-                    if (book.DateOfReturn < earliestReturnDate.DateOfReturn)
-                        earliestReturnDate = book;
+                    if (book.DateOfReturn < bookWithEarliestReturnDate.DateOfReturn)
+                        bookWithEarliestReturnDate = book;
                 }
-                return earliestReturnDate;
+                return bookWithEarliestReturnDate;
             }
         }
+       
 
     }
 }

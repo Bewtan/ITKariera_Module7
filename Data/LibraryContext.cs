@@ -6,13 +6,13 @@ using System.Text;
 
 namespace Library.Data
 {
-    class LibraryContext: DbContext
+    public class LibraryContext: DbContext
     {
-        public DbSet<Book> Books { get; set; }
-        public DbSet<Genre> Genres { get; set; }
-        public DbSet<Publisher> Publishers { get; set; }
-        public DbSet<BooksGenres> BooksGenres { get; set; }
-        public DbSet<Client> Clients { get; set; }
+        public virtual DbSet<Book> Books { get; set; }
+        public virtual DbSet<Genre> Genres { get; set; }
+        public virtual DbSet<Publisher> Publishers { get; set; }
+        public virtual DbSet<BooksGenres> BooksGenres { get; set; }
+        public virtual DbSet<Client> Clients { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) // Manages relations between tables

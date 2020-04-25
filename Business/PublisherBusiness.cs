@@ -7,9 +7,17 @@ using System.Text;
 
 namespace Library.Business
 {
-    class PublisherBusiness
+    public class PublisherBusiness
     {
         private LibraryContext libraryContext;
+        public PublisherBusiness(LibraryContext context)
+        {
+            libraryContext = context;
+        }
+        public PublisherBusiness()
+        {
+            libraryContext = new LibraryContext();
+        }
         /// <summary>
         /// Returns a publisher by name.
         /// </summary>
@@ -17,7 +25,7 @@ namespace Library.Business
         /// <returns></returns>
         public Publisher Get(string name)
         {
-            using (libraryContext = new LibraryContext())
+            using (libraryContext)
             {
                 return libraryContext.Publishers.SingleOrDefault(publisher => publisher.Name == name);
             }
@@ -28,7 +36,7 @@ namespace Library.Business
         /// <param name="publisher"></param>
         public void Add(Publisher publisher)
         {
-            using (libraryContext = new LibraryContext())
+            using (libraryContext)
             {
                 libraryContext.Publishers.Add(publisher);
                 libraryContext.SaveChanges();
@@ -40,7 +48,7 @@ namespace Library.Business
         /// <param name="name"></param>
         public void Delete(string name)
         {
-            using (libraryContext = new LibraryContext())
+            using (libraryContext)
             {
                 var publisher = this.Get(name);
                 if (publisher != null)
@@ -56,7 +64,7 @@ namespace Library.Business
         /// <param name="publisher"></param>
         public void Update(Publisher publisher)
         {
-            using (libraryContext = new LibraryContext())
+            using (libraryContext)
             {
                 var publisherOld = libraryContext.Publishers.Find(publisher.Id);
                 if (publisherOld != null)
@@ -73,7 +81,7 @@ namespace Library.Business
         /// <returns></returns>
         public List<Publisher> SearchByCountryOfOrigin(string countryOfOrigin)
         {
-            using (libraryContext = new LibraryContext())
+            using (libraryContext)
             {
                 return libraryContext.Publishers.Where(publisher => publisher.CountryOfOrigin == countryOfOrigin).ToList();
             }

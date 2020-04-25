@@ -7,9 +7,17 @@ using System.Text;
 
 namespace Library.Business
 {
-    class BooksGenresBusiness
+    public class BooksGenresBusiness
     {
         private LibraryContext libraryContext;
+        public BooksGenresBusiness(LibraryContext context)
+        {
+            libraryContext = context;
+        }
+        public BooksGenresBusiness()
+        {
+            libraryContext = new LibraryContext();
+        }
 
         /// <summary>
         /// Returns the books associated with a given genre.
@@ -18,11 +26,11 @@ namespace Library.Business
         /// <returns></returns>
         public List<Book> GetBooks(string genreName)
         {
-            using (libraryContext = new LibraryContext())
+            using (libraryContext)
             {
-                GenreBusiness genreBusiness = new GenreBusiness();
-                Genre genre = genreBusiness.Get(genreName);
-                return libraryContext.BooksGenres.Where(booksgenre => booksgenre.Genre == genre).Select(booksgenre => booksgenre.Book).ToList();
+                Genre genre = libraryContext.Genres.SingleOrDefault(genre => genre.Name == genreName);
+                List<int> bookId = libraryContext.BooksGenres.Where(booksgenre => booksgenre.Genre == genre).Select(booksgenre => booksgenre.Book.Id).ToList();
+                return libraryContext.Books.Where(book => bookId.Contains(book.Id)).ToList();
             }
         }
         /// <summary>
@@ -32,11 +40,11 @@ namespace Library.Business
         /// <returns></returns>
         public List<Genre> GetGenres(string title)
         {
-            using (libraryContext = new LibraryContext())
+            using (libraryContext)
             {
-                BookBusiness bookBusiness = new BookBusiness();
-                Book book = bookBusiness.Get(title);
-                return libraryContext.BooksGenres.Where(booksgenre => booksgenre.Book == book).Select(booksgenre => booksgenre.Genre).ToList();
+                Book book = libraryContext.Books.SingleOrDefault(book => book.Title == title);
+                List<int> genreId = libraryContext.BooksGenres.Where(booksgenre => booksgenre.Book == book).Select(booksgenre => booksgenre.GenreId).ToList();
+                return libraryContext.Genres.Where(genre => genreId.Contains(genre.Id)).ToList();
             }
         }
         /// <summary>
@@ -46,7 +54,7 @@ namespace Library.Business
         /// <param name="genreId"></param>
         public void Add(int bookId, int genreId)
         {
-            using (libraryContext = new LibraryContext())
+            using (libraryContext)
             {
                 BooksGenres booksGenre = new BooksGenres();
                 booksGenre.BookId = bookId;
