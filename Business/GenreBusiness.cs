@@ -9,14 +9,19 @@ namespace Library.Business
     public class GenreBusiness
     {
         private LibraryContext libraryContext;
+        private ContextGenerator generator;
 
         public GenreBusiness(LibraryContext context)
         {
             libraryContext = context;
+            generator = new ContextGenerator(context);
+
         }
         public GenreBusiness()
         {
             libraryContext = new LibraryContext();
+            generator = new ContextGenerator(libraryContext);
+
         }
         /// <summary>
         /// Returns a genre by name.
@@ -25,7 +30,7 @@ namespace Library.Business
         /// <returns></returns>
         public Genre Get(string name)
         {
-            using (libraryContext)
+            using (libraryContext = generator.Generate())
             {
                 return libraryContext.Genres.SingleOrDefault(genre => genre.Name == name);
             }
@@ -36,7 +41,7 @@ namespace Library.Business
         /// <param name="genre"></param>
         public void Add(Genre genre)
         {
-            using (libraryContext)
+            using (libraryContext = generator.Generate())
             {
                 libraryContext.Genres.Add(genre);
                 libraryContext.SaveChanges();
@@ -48,7 +53,7 @@ namespace Library.Business
         /// <param name="name"></param>
         public void Delete(string name)
         {
-            using (libraryContext)
+            using (libraryContext = generator.Generate())
             {
                 var genre = this.Get(name);
                 if (genre != null)

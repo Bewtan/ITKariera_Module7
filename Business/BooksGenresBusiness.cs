@@ -10,13 +10,17 @@ namespace Library.Business
     public class BooksGenresBusiness
     {
         private LibraryContext libraryContext;
+        private ContextGenerator generator;
+
         public BooksGenresBusiness(LibraryContext context)
         {
             libraryContext = context;
+            generator = new ContextGenerator(context);
         }
         public BooksGenresBusiness()
         {
             libraryContext = new LibraryContext();
+            generator = new ContextGenerator(libraryContext);
         }
 
         /// <summary>
@@ -26,7 +30,7 @@ namespace Library.Business
         /// <returns></returns>
         public List<Book> GetBooks(string genreName)
         {
-            using (libraryContext)
+            using (libraryContext = generator.Generate())
             {
                 Genre genre = libraryContext.Genres.SingleOrDefault(genre => genre.Name == genreName);
                 List<int> bookId = libraryContext.BooksGenres.Where(booksgenre => booksgenre.Genre == genre).Select(booksgenre => booksgenre.Book.Id).ToList();
@@ -40,7 +44,7 @@ namespace Library.Business
         /// <returns></returns>
         public List<Genre> GetGenres(string title)
         {
-            using (libraryContext)
+            using (libraryContext = generator.Generate())
             {
                 Book book = libraryContext.Books.SingleOrDefault(book => book.Title == title);
                 List<int> genreId = libraryContext.BooksGenres.Where(booksgenre => booksgenre.Book == book).Select(booksgenre => booksgenre.GenreId).ToList();
@@ -54,7 +58,7 @@ namespace Library.Business
         /// <param name="genreId"></param>
         public void Add(int bookId, int genreId)
         {
-            using (libraryContext)
+            using (libraryContext = generator.Generate())
             {
                 BooksGenres booksGenre = new BooksGenres();
                 booksGenre.BookId = bookId;

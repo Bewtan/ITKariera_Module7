@@ -11,33 +11,19 @@ namespace Library.Business
     public class BookBusiness
     {
         private BooksGenresBusiness booksGenresBusiness;
-        private LibraryContext libraryContext = new LibraryContext();
-        private IQueryable<Book> books;
-        private IQueryable<Client> clients;
-        private IQueryable<Publisher> publishers;
-        private IQueryable<BooksGenres> booksGenres;
-        private IQueryable<Genre> genres;
-
+        private LibraryContext libraryContext;
+        private ContextGenerator generator;
 
         public BookBusiness(LibraryContext context)
         {
             libraryContext = context;
-            books = context.Books;
-            clients = context.Clients;
-            publishers = context.Publishers;
-            booksGenres = context.BooksGenres;
-            genres = context.Genres;
-
+            generator = new ContextGenerator(context);
             booksGenresBusiness = new BooksGenresBusiness(context);
         }
         public BookBusiness()
         {
             libraryContext = new LibraryContext();
-            books = libraryContext.Books;
-            clients = libraryContext.Clients;
-            publishers = libraryContext.Publishers;
-            booksGenres = libraryContext.BooksGenres;
-            genres = libraryContext.Genres;
+            generator = new ContextGenerator(libraryContext);
             booksGenresBusiness = new BooksGenresBusiness();
         }
         /// <summary>
@@ -47,7 +33,7 @@ namespace Library.Business
         /// <returns></returns>
         public Book Get(string title)
         {
-            using (libraryContext = ContextGenerator())
+            using (libraryContext = generator.Generate())
             {
                 return libraryContext.Books.SingleOrDefault(book => book.Title == title);
             }
@@ -60,7 +46,7 @@ namespace Library.Business
         /// <returns></returns>
         public List<Genre> GetGenres(string title)
         {
-            using (libraryContext = ContextGenerator())
+            using (libraryContext = generator.Generate())
             {
                 return booksGenresBusiness.GetGenres(title);
             }
@@ -74,7 +60,7 @@ namespace Library.Business
         /// <param name="genres"></param>
         public void Add(Book book, string[] genres)
         {
-            using (libraryContext = ContextGenerator())
+            using (libraryContext = generator.Generate())
             {
                 libraryContext.Books.Add(book);
                 if(genres != null)
@@ -89,7 +75,7 @@ namespace Library.Business
         /// <param name="id"></param>
         public void Delete(int id) // Unsure if the delete should be by id or title.
         {
-            using (libraryContext = ContextGenerator())
+            using (libraryContext = generator.Generate())
             {
                 var book = libraryContext.Books.Find(id);
                 if (book != null)
@@ -106,7 +92,7 @@ namespace Library.Business
         /// <param name="genres"></param>
         public void Update(Book bookInput, string[] genres)
         {
-            using (libraryContext = ContextGenerator())
+            using (libraryContext = generator.Generate())
             {
                 var bookOld = libraryContext.Books.Find(bookInput.Id);
                 if (bookOld != null)
@@ -128,7 +114,7 @@ namespace Library.Business
         public void Update(Book bookInput)
         {
             
-            using (libraryContext = ContextGenerator())
+            using (libraryContext = generator.Generate())
             {
                 var bookOld = libraryContext.Books.Find(bookInput.Id);
                 if (bookOld != null)
@@ -146,7 +132,7 @@ namespace Library.Business
         /// <param name="genres"></param>
         private void AddGenres(Book book, string[] genres) // Can potentially make this public if we wanna support such functionality.
         {
-            using (libraryContext = ContextGenerator())
+            using (libraryContext = generator.Generate())
             {
                 Genre genre;
                 foreach (string genreName in genres)
@@ -163,7 +149,7 @@ namespace Library.Business
         /// <returns></returns>
         public List<Book> GetAll() //I'm not sure if we would need this, but I added it anyway.
         {
-            using (libraryContext= ContextGenerator())
+            using (libraryContext= generator.Generate())
             {
                 return libraryContext.Books.ToList();
             }
@@ -177,7 +163,7 @@ namespace Library.Business
         /// <returns></returns>
         public bool IsAvailable(string title) //This may be rather obsolete, because Get() exists
         {
-            using (libraryContext = ContextGenerator())
+            using (libraryContext = generator.Generate())
             {
                 return libraryContext.Books.SingleOrDefault(book => book.Title == title).IsAvailable;
             }
@@ -190,7 +176,7 @@ namespace Library.Business
         /// <returns></returns>
         public Client GetClient(string title) 
         {
-            using (libraryContext = ContextGenerator())
+            using (libraryContext = generator.Generate())
             {
                 var Book = this.Get(title);
                 return libraryContext.Clients.Find(Book.ClientId);
@@ -203,7 +189,7 @@ namespace Library.Business
         /// <returns></returns>
         public Publisher GetPublisher(string title)
         {
-            using (libraryContext= ContextGenerator())
+            using (libraryContext= generator.Generate())
             {
                 var Book = this.Get(title);
                 return libraryContext.Publishers.Find(Book.PublisherId);
@@ -217,7 +203,7 @@ namespace Library.Business
         /// <returns></returns>
         public DateTime? GetReturnDate(string title)  //This may be rather obsolete, because Get() exists
         {
-            using (libraryContext = ContextGenerator())
+            using (libraryContext = generator.Generate())
             {
                 return libraryContext.Books.SingleOrDefault(book => book.Title == title).DateOfReturn;
             }
@@ -230,7 +216,7 @@ namespace Library.Business
         /// <returns></returns>
         public List<Book> SearchByAuthor(string name)
         {
-            using (libraryContext = ContextGenerator())
+            using (libraryContext = generator.Generate())
             {
                 return libraryContext.Books.Where(book => book.AuthorName == name).ToList();
             }
@@ -243,7 +229,7 @@ namespace Library.Business
         /// <returns></returns>
         public List<Book> SearchByGenre(string genreName)
         {
-            using (libraryContext = ContextGenerator())
+            using (libraryContext = generator.Generate())
             {
                 return booksGenresBusiness.GetBooks(genreName);
             }
@@ -256,7 +242,7 @@ namespace Library.Business
         /// <returns></returns>
         public List<Book> SearchByPublisher(string publisherName)
         {
-            using (libraryContext = ContextGenerator())
+            using (libraryContext = generator.Generate())
             {
                 Publisher BookPublisher = libraryContext.Publishers.SingleOrDefault(publisher => publisher.Name == publisherName);
                 return libraryContext.Books.Where(book => book.Publisher.Id == BookPublisher.Id).ToList();
@@ -269,7 +255,7 @@ namespace Library.Business
         /// <returns></returns>
         public List<Book> SearchByLanguage(string language)
         {
-            using (libraryContext = ContextGenerator())
+            using (libraryContext = generator.Generate())
             {
                 return libraryContext.Books.Where(book => book.Language == language).ToList();
             }
@@ -282,7 +268,7 @@ namespace Library.Business
         /// <returns></returns>
         public List<Book> SearchByDateOfPublishing(DateTime dateOfPublishing,string beforeOrAfter)
         {
-            using (libraryContext = ContextGenerator())
+            using (libraryContext = generator.Generate())
             {
                 if (beforeOrAfter == "before")
                     return libraryContext.Books.Where(book => book.DateOfPublishing < dateOfPublishing).ToList();
@@ -292,20 +278,6 @@ namespace Library.Business
                     return null;
             }
         }
-        /// <summary>
-        /// Generates a new library context.
-        /// </summary>
-        /// <returns></returns>
-        private LibraryContext ContextGenerator() // I needed to do this because this is the only solution I thought in order to implent the unit tests together with using statements
-        {
-            libraryContext = new LibraryContext();
-            libraryContext.Books = (DbSet<Book>)books;
-            libraryContext.Clients = (DbSet<Client>)clients;
-            libraryContext.Publishers = (DbSet<Publisher>)publishers;
-            libraryContext.BooksGenres = (DbSet<BooksGenres>)booksGenres;
-            libraryContext.Genres = (DbSet<Genre>)genres;
 
-            return libraryContext;
-        }
     }
 }

@@ -11,15 +11,19 @@ namespace Library.Business
     {
         private LibraryContext libraryContext;
         private BookBusiness bookBusiness;
+        private ContextGenerator generator;
+
         public ClientBusiness(LibraryContext context)
         {
             libraryContext = context;
             bookBusiness = new BookBusiness(context);
+            generator = new ContextGenerator(context);
         }
         public ClientBusiness()
         {
             libraryContext = new LibraryContext();
             bookBusiness = new BookBusiness();
+            generator = new ContextGenerator(libraryContext);
         }
 
         /// <summary>
@@ -29,7 +33,7 @@ namespace Library.Business
         /// <returns></returns>
         public Client Get(int id)
         {
-            using (libraryContext)
+            using (libraryContext = generator.Generate())
             {
                 return libraryContext.Clients.Find(id);
             }
@@ -40,7 +44,7 @@ namespace Library.Business
         /// <param name="id"></param>
         public void Delete(int id)
         {
-            using (libraryContext)
+            using (libraryContext = generator.Generate())
             {
                 var client = this.Get(id);
                 if (client != null)
@@ -56,7 +60,7 @@ namespace Library.Business
         /// <param name="client"></param>
         public void Add(Client client)
         {
-            using (libraryContext)
+            using (libraryContext = generator.Generate())
             {
                 libraryContext.Clients.Add(client);
                 libraryContext.SaveChanges();
@@ -69,7 +73,7 @@ namespace Library.Business
         /// <param name="books"></param>
         public void BorrowBooks(int clientId, string[] books) {
 
-            using (libraryContext)
+            using (libraryContext = generator.Generate())
             {
                 var client = this.Get(clientId);
                 foreach (string bookName in books)
@@ -94,7 +98,7 @@ namespace Library.Business
         /// <param name="clientId"></param>
         /// <param name="books"></param>
         public void ReturnBooks(int clientId, string[] books) {
-            using (libraryContext)
+            using (libraryContext = generator.Generate())
             {
                 var client = this.Get(clientId);
                 foreach (string bookName in books)
@@ -123,7 +127,7 @@ namespace Library.Business
         /// <param name="client"></param>
         public void Update(Client client)
         {
-            using (libraryContext)
+            using (libraryContext = generator.Generate())
             {
                 var clientOld = this.Get(client.Id);
                 if (clientOld != null)
@@ -139,7 +143,7 @@ namespace Library.Business
         /// <param name="clientId"></param>
         /// <returns></returns>
         public List<Book> GetBorrowedBooks(int clientId) {
-            using (libraryContext)
+            using (libraryContext = generator.Generate())
             {
                 return libraryContext.Books.Where(book => book.ClientId == clientId).ToList();
             }
@@ -151,7 +155,7 @@ namespace Library.Business
         /// <returns></returns>
         public Book EarliestReturnDate(int clientId) //Maybe not that useful.
         {
-            using (libraryContext)
+            using (libraryContext = generator.Generate())
             {
                 List<Book> borrowedBooks = this.GetBorrowedBooks(clientId);
                 Book bookWithEarliestReturnDate = new Book();

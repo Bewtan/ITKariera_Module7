@@ -10,13 +10,18 @@ namespace Library.Business
     public class PublisherBusiness
     {
         private LibraryContext libraryContext;
+        private ContextGenerator generator;
+
         public PublisherBusiness(LibraryContext context)
         {
             libraryContext = context;
+            generator = new ContextGenerator(context);
+
         }
         public PublisherBusiness()
         {
             libraryContext = new LibraryContext();
+            generator = new ContextGenerator(libraryContext);
         }
         /// <summary>
         /// Returns a publisher by name.
@@ -25,7 +30,7 @@ namespace Library.Business
         /// <returns></returns>
         public Publisher Get(string name)
         {
-            using (libraryContext)
+            using (libraryContext = generator.Generate())
             {
                 return libraryContext.Publishers.SingleOrDefault(publisher => publisher.Name == name);
             }
@@ -36,7 +41,7 @@ namespace Library.Business
         /// <param name="publisher"></param>
         public void Add(Publisher publisher)
         {
-            using (libraryContext)
+            using (libraryContext = generator.Generate())
             {
                 libraryContext.Publishers.Add(publisher);
                 libraryContext.SaveChanges();
@@ -48,7 +53,7 @@ namespace Library.Business
         /// <param name="name"></param>
         public void Delete(string name)
         {
-            using (libraryContext)
+            using (libraryContext = generator.Generate())
             {
                 var publisher = this.Get(name);
                 if (publisher != null)
@@ -64,7 +69,7 @@ namespace Library.Business
         /// <param name="publisher"></param>
         public void Update(Publisher publisher)
         {
-            using (libraryContext)
+            using (libraryContext = generator.Generate())
             {
                 var publisherOld = libraryContext.Publishers.Find(publisher.Id);
                 if (publisherOld != null)
@@ -81,7 +86,7 @@ namespace Library.Business
         /// <returns></returns>
         public List<Publisher> SearchByCountryOfOrigin(string countryOfOrigin)
         {
-            using (libraryContext)
+            using (libraryContext = generator.Generate())
             {
                 return libraryContext.Publishers.Where(publisher => publisher.CountryOfOrigin == countryOfOrigin).ToList();
             }
