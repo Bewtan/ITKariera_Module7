@@ -53,9 +53,9 @@ namespace Library.Business
         /// <param name="name"></param>
         public void Delete(string name)
         {
+            var publisher = this.Get(name);
             using (libraryContext = generator.Generate())
             {
-                var publisher = this.Get(name);
                 if (publisher != null)
                 {
                     libraryContext.Publishers.Remove(publisher);

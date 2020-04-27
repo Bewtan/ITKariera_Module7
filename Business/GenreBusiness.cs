@@ -53,9 +53,9 @@ namespace Library.Business
         /// <param name="name"></param>
         public void Delete(string name)
         {
+            var genre = this.Get(name);
             using (libraryContext = generator.Generate())
             {
-                var genre = this.Get(name);
                 if (genre != null)
                 {
                     libraryContext.Genres.Remove(genre); // Once again I think this cascades.

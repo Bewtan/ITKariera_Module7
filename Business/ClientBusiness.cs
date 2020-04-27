@@ -46,7 +46,7 @@ namespace Library.Business
         {
             using (libraryContext = generator.Generate())
             {
-                var client = this.Get(id);
+                var client = libraryContext.Clients.Find(id);
                 if (client != null)
                 {
                     libraryContext.Clients.Remove(client); 
@@ -73,9 +73,9 @@ namespace Library.Business
         /// <param name="books"></param>
         public void BorrowBooks(int clientId, string[] books) {
 
+            var client = this.Get(clientId);
             using (libraryContext = generator.Generate())
             {
-                var client = this.Get(clientId);
                 foreach (string bookName in books)
                 {
                     var book = bookBusiness.Get(bookName);
@@ -98,9 +98,9 @@ namespace Library.Business
         /// <param name="clientId"></param>
         /// <param name="books"></param>
         public void ReturnBooks(int clientId, string[] books) {
+            var client = this.Get(clientId);
             using (libraryContext = generator.Generate())
             {
-                var client = this.Get(clientId);
                 foreach (string bookName in books)
                 {
                     var book = bookBusiness.Get(bookName);
@@ -127,9 +127,9 @@ namespace Library.Business
         /// <param name="client"></param>
         public void Update(Client client)
         {
+            var clientOld = this.Get(client.Id);
             using (libraryContext = generator.Generate())
             {
-                var clientOld = this.Get(client.Id);
                 if (clientOld != null)
                 {
                     libraryContext.Entry(clientOld).CurrentValues.SetValues(client);
@@ -155,9 +155,9 @@ namespace Library.Business
         /// <returns></returns>
         public Book EarliestReturnDate(int clientId) //Maybe not that useful.
         {
+            List<Book> borrowedBooks = this.GetBorrowedBooks(clientId);
             using (libraryContext = generator.Generate())
             {
-                List<Book> borrowedBooks = this.GetBorrowedBooks(clientId);
                 Book bookWithEarliestReturnDate = new Book();
                 bookWithEarliestReturnDate.DateOfReturn = DateTime.MaxValue;
                 foreach(Book book in borrowedBooks)

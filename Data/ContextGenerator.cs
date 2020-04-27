@@ -22,7 +22,8 @@ namespace Library.Data
             publishers = context.Publishers;
             booksGenres = context.BooksGenres;
             genres = context.Genres;
-            if(books.Count() > 0 || clients.Count() > 0 || publishers.Count() > 0 || booksGenres.Count() > 0 || genres.Count() > 0)
+            LibraryContext testContext = new LibraryContext();
+            if(books.Count() != testContext.Books.Count())
             {
                 IsMockContext = true;
             }

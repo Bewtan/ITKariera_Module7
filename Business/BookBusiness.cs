@@ -63,9 +63,9 @@ namespace Library.Business
             using (libraryContext = generator.Generate())
             {
                 libraryContext.Books.Add(book);
-                if(genres != null)
-                    this.AddGenres(book, genres);
                 libraryContext.SaveChanges();
+                if (genres != null && genres[0] != "")
+                    this.AddGenres(book, genres);
             }
         }
 
@@ -138,7 +138,10 @@ namespace Library.Business
                 foreach (string genreName in genres)
                 {
                     genre = libraryContext.Genres.SingleOrDefault(g => g.Name == genreName);
-                    booksGenresBusiness.Add(book.Id, genre.Id);
+                    if (genre == null)
+                        throw new InvalidOperationException("No such genre!");
+                    else
+                        booksGenresBusiness.Add(book.Id, genre.Id);
                 }
             }
         }
@@ -176,9 +179,9 @@ namespace Library.Business
         /// <returns></returns>
         public Client GetClient(string title) 
         {
+            var Book = this.Get(title);
             using (libraryContext = generator.Generate())
             {
-                var Book = this.Get(title);
                 return libraryContext.Clients.Find(Book.ClientId);
             }
         }
@@ -189,9 +192,9 @@ namespace Library.Business
         /// <returns></returns>
         public Publisher GetPublisher(string title)
         {
+            var Book = this.Get(title);
             using (libraryContext= generator.Generate())
-            {
-                var Book = this.Get(title);
+            { 
                 return libraryContext.Publishers.Find(Book.PublisherId);
             }
         }
@@ -245,7 +248,7 @@ namespace Library.Business
             using (libraryContext = generator.Generate())
             {
                 Publisher BookPublisher = libraryContext.Publishers.SingleOrDefault(publisher => publisher.Name == publisherName);
-                return libraryContext.Books.Where(book => book.Publisher.Id == BookPublisher.Id).ToList();
+                return libraryContext.Books.Where(book => book.PublisherId == BookPublisher.Id).ToList();
             }
         }
         /// <summary>
