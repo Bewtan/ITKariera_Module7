@@ -63,6 +63,17 @@ namespace Library.Business
                 }
             }
         }
+        /// <summary>
+        /// Returns all genres.
+        /// </summary>
+        /// <returns></returns>
+        public List<Genre> GetAll() 
+        {
+            using (libraryContext = generator.Generate())
+            {
+                return libraryContext.Genres.ToList();
+            }
+        }
 
     }
 }

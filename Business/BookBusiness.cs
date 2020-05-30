@@ -98,29 +98,14 @@ namespace Library.Business
                 if (bookOld != null)
                 {
                     libraryContext.Entry(bookOld).CurrentValues.SetValues(bookInput);
-
-                    var BooksGenres = libraryContext.BooksGenres.Where(booksgenre => booksgenre.BookId == bookOld.Id);
-                    libraryContext.BooksGenres.RemoveRange(BooksGenres); //Removes old genres
-                    AddGenres(bookOld, genres);
                     libraryContext.SaveChanges();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Updates the information about a book.
-        /// </summary>
-        /// <param name="bookInput"></param>
-        public void Update(Book bookInput)
-        {
-            
-            using (libraryContext = generator.Generate())
-            {
-                var bookOld = libraryContext.Books.Find(bookInput.Id);
-                if (bookOld != null)
-                {
-                    libraryContext.Entry(bookOld).CurrentValues.SetValues(bookInput);
-                    libraryContext.SaveChanges();
+                    if (genres != null && genres[0] != "")
+                    {
+                        var BooksGenres = libraryContext.BooksGenres.Where(booksgenre => booksgenre.BookId == bookOld.Id);
+                        libraryContext.BooksGenres.RemoveRange(BooksGenres); //Removes old genres
+                        libraryContext.SaveChanges();
+                        AddGenres(bookOld, genres);
+                    }
                 }
             }
         }
@@ -130,7 +115,7 @@ namespace Library.Business
         /// </summary>
         /// <param name="book"></param>
         /// <param name="genres"></param>
-        private void AddGenres(Book book, string[] genres) // Can potentially make this public if we wanna support such functionality.
+        public void AddGenres(Book book, string[] genres) // Can potentially make this public if we wanna support such functionality.
         {
             using (libraryContext = generator.Generate())
             {

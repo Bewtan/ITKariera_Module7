@@ -10,7 +10,7 @@ namespace Library.Presentation
 {
     class BookDisplay
     {
-        private int closeOperationId = 6;
+        private int closeOperationId = 15;
         private BookBusiness bookBusiness;
 
         private void ShowMenu()
@@ -22,8 +22,17 @@ namespace Library.Presentation
             Console.WriteLine("2. Add new book");
             Console.WriteLine("3. Update book");
             Console.WriteLine("4. Fetch book by Title");
-            Console.WriteLine("5. Delete entry by Title");
-            Console.WriteLine("6. Exit");
+            Console.WriteLine("5. Delete entry by Id");
+            Console.WriteLine("6. Add Genres to Book");
+            Console.WriteLine("7. Check if Book is Available");
+            Console.WriteLine("8. Get Book Client");
+            Console.WriteLine("9. Get Book Return Date");
+            Console.WriteLine("10. Search Books by Author");
+            Console.WriteLine("11. Search Books by Genre");
+            Console.WriteLine("12. Search Books by Publisher");
+            Console.WriteLine("13. Search Books by Language");
+            Console.WriteLine("14. Search Books by Date of Publishing");
+            Console.WriteLine("15. Exit");
         }
         private void Input()
         {
@@ -48,6 +57,33 @@ namespace Library.Presentation
                         break;
                     case 5:
                         Delete();
+                        break;
+                    case 6:
+                        AddGenres();
+                        break;
+                    case 7:
+                        CheckIfBookIsAvailable();
+                        break;
+                    case 8:
+                        GetBookClient();
+                        break;
+                    case 9:
+                        GetReturnDate();
+                        break;
+                    case 10:
+                        SearchBooksByAuthor();
+                        break;
+                    case 11:
+                        SearchBooksByGenre();
+                        break;
+                    case 12:
+                        SearchBooksByPublisher();
+                        break;
+                    case 13:
+                        SearchBooksByLanguage();
+                        break;
+                    case 14:
+                        SearchBooksByDateOfPublishing();
                         break;
                     default:
                         break;
@@ -74,6 +110,7 @@ namespace Library.Presentation
             book.DateOfPublishing = DateTime.Parse(Console.ReadLine());
             Console.WriteLine("Enter Genres: ");
             string[] genres = Console.ReadLine().Split(" ");
+            book.IsAvailable = true;
             bookBusiness.Add(book, genres);
         }
         private void ListAll()
@@ -95,7 +132,7 @@ namespace Library.Presentation
             Book book = bookBusiness.Get(title);
             if (book != null)
             {
-                Console.WriteLine("Enter Title: ");
+                Console.WriteLine("Enter new Title: ");
                 book.Title = Console.ReadLine();
                 Console.WriteLine("Enter Author name: ");
                 book.AuthorName = Console.ReadLine();
@@ -105,7 +142,9 @@ namespace Library.Presentation
                 book.PublisherId = int.Parse(Console.ReadLine());
                 Console.WriteLine("Enter Date of publishing: ");
                 book.DateOfPublishing = DateTime.Parse(Console.ReadLine());
-                bookBusiness.Update(book);
+                Console.WriteLine("Enter Genres: ");
+                string[] genres = Console.ReadLine().Split(" ");
+                bookBusiness.Update(book, genres);
             }
             else
             {
@@ -131,6 +170,10 @@ namespace Library.Presentation
                 Console.WriteLine("Genres: " + String.Join(" ",genres));
                 Console.WriteLine(new string('-', 40));
             }
+            else
+            {
+                Console.WriteLine("Book not found!");
+            }
         }
         private void Delete()
         {
@@ -139,6 +182,141 @@ namespace Library.Presentation
             bookBusiness.Delete(id);
             Console.WriteLine("Done.");
         }
+        private void AddGenres()
+        {
+            Console.WriteLine("Enter book Title: ");
+            string title = Console.ReadLine();
+            Book book = bookBusiness.Get(title);
+            if (book != null)
+            {
+                Console.WriteLine("Enter Genres: ");
+                string[] genres = Console.ReadLine().Split(" ");
+                bookBusiness.AddGenres(book, genres);
+            }
+            else
+            {
+                Console.WriteLine("Book not found!");
+            }
+        }
 
+        private void CheckIfBookIsAvailable()
+        {
+            Console.WriteLine("Enter book Title: ");
+            string title = Console.ReadLine();
+            Book book = bookBusiness.Get(title);
+            if (book != null)
+            {
+                Console.WriteLine(bookBusiness.IsAvailable(title));
+            }
+            else
+            {
+                Console.WriteLine("Book not found!");
+            }
+        }
+        private void GetBookClient()
+        {
+            Console.WriteLine("Enter book Title: ");
+            string title = Console.ReadLine();
+            Client client = bookBusiness.GetClient(title);
+            if(client != null)
+            {
+                Console.WriteLine(new string('-', 40));
+                Console.WriteLine("ID: " + client.Id);
+                Console.WriteLine("First Name: " + client.FirstName);
+                Console.WriteLine("Last Name: " + client.LastName);
+                Console.WriteLine("Strikes: " + client.Strikes);
+                Console.WriteLine(new string('-', 40));
+
+            }
+            else
+            {
+                Console.WriteLine("Client not found!");
+            }
+        }
+        private void GetReturnDate()
+        {
+            Console.WriteLine("Enter book Title: ");
+            string title = Console.ReadLine();
+            Book book = bookBusiness.Get(title);
+            if (book != null)
+            {
+                Console.WriteLine(bookBusiness.GetReturnDate(title));
+            }
+            else
+            {
+                Console.WriteLine("Book not found!");
+            }
+        }
+        private void SearchBooksByAuthor()
+        {
+            Console.WriteLine("Enter Author name: ");
+            string authorName = Console.ReadLine();
+            List<Book> books = bookBusiness.SearchByAuthor(authorName);
+            Console.WriteLine(new string('-', 40));
+            Console.WriteLine(new string(' ', 16) + "Books" + new string(' ', 16));
+            Console.WriteLine(new string('-', 40));
+            foreach (var book in books)
+            {
+                Console.WriteLine("{0} || {1}", book.Id, book.Title);
+            }
+        }
+
+        private void SearchBooksByGenre()
+        {
+            Console.WriteLine("Enter Genre: ");
+            string genre = Console.ReadLine();
+            List<Book> books = bookBusiness.SearchByGenre(genre);
+            Console.WriteLine(new string('-', 40));
+            Console.WriteLine(new string(' ', 16) + "Books" + new string(' ', 16));
+            Console.WriteLine(new string('-', 40));
+            foreach (var book in books)
+            {
+                Console.WriteLine("{0} || {1}", book.Id, book.Title);
+            }
+        }
+
+        private void SearchBooksByPublisher()
+        {
+            Console.WriteLine("Enter Publisher name: ");
+            string publisherName = Console.ReadLine();
+            List<Book> books = bookBusiness.SearchByPublisher(publisherName);
+            Console.WriteLine(new string('-', 40));
+            Console.WriteLine(new string(' ', 16) + "Books" + new string(' ', 16));
+            Console.WriteLine(new string('-', 40));
+            foreach (var book in books)
+            {
+                Console.WriteLine("{0} || {1}", book.Id, book.Title);
+            }
+        }
+
+        private void SearchBooksByLanguage()
+        {
+            Console.WriteLine("Enter Language: ");
+            string language = Console.ReadLine();
+            List<Book> books = bookBusiness.SearchByLanguage(language);
+            Console.WriteLine(new string('-', 40));
+            Console.WriteLine(new string(' ', 16) + "Books" + new string(' ', 16));
+            Console.WriteLine(new string('-', 40));
+            foreach (var book in books)
+            {
+                Console.WriteLine("{0} || {1}", book.Id, book.Title);
+            }
+        }
+
+        private void SearchBooksByDateOfPublishing()
+        {
+            Console.WriteLine("Enter Date: ");
+            DateTime date = DateTime.Parse(Console.ReadLine());
+            Console.WriteLine("Enter Before or After: ");
+            string beforeOrAfter = Console.ReadLine();
+            List<Book> books = bookBusiness.SearchByDateOfPublishing(date, beforeOrAfter);
+            Console.WriteLine(new string('-', 40));
+            Console.WriteLine(new string(' ', 16) + "Books" + new string(' ', 16));
+            Console.WriteLine(new string('-', 40));
+            foreach (var book in books)
+            {
+                Console.WriteLine("{0} || {1}", book.Id, book.Title);
+            }
+        }
     }
 }

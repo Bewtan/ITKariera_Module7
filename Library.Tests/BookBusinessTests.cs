@@ -36,7 +36,7 @@ namespace Library.Tests
 
             var data2 = new List<Client> //Clients
             {
-                new Client {Id = 1 },
+                new Client { Id = 1 },
                 new Client { Id = 2 },
                 new Client { Id = 3 },
             }.AsQueryable();
@@ -166,7 +166,13 @@ namespace Library.Tests
             Assert.AreEqual("BBB", books[0].Title, "Book 1 isn't equal to BBB");
             Assert.AreEqual("CCC", books[1].Title, "Book 2 isn't equal to CCC");
         }
+        [Test]
+        public void TestIfSearchByDateOfPublishingReturnsNullIfTextIsIncorrect()
+        {
+            var books = bookBusiness.SearchByDateOfPublishing(DateTime.Today.AddDays(2), "fff");
 
+            Assert.AreEqual(null, books, "Doesn't return null when values are incorrect!");
+        }
 
     }
 
@@ -180,8 +186,64 @@ namespace Library.Tests
         [SetUp]
         public void Setup()
         {
+            var data = new List<Book>().AsQueryable();
+            mockDBSetBooks = new Mock<DbSet<Book>>();
+           
+            mockDBSetBooks.As<IQueryable<Book>>().Setup(m => m.Provider).Returns(data.Provider);
+            mockDBSetBooks.As<IQueryable<Book>>().Setup(m => m.Expression).Returns(data.Expression);
+            mockDBSetBooks.As<IQueryable<Book>>().Setup(m => m.ElementType).Returns(data.ElementType);
+            mockDBSetBooks.As<IQueryable<Book>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
 
+            mockDBSetBooks.Setup(m => m.Find(2)).Returns(new Book() { Id = 2}); //Sets up Find method for Case 2
+            
+            mockContext = new Mock<LibraryContext>();
+            mockContext.Setup(m => m.Books).Returns(mockDBSetBooks.Object);
+            mockContext.Setup(m => m.Entry(It.IsAny<Book>())).Verifiable();
+
+            bookBusiness = new BookBusiness(mockContext.Object);          
         }
+
+        [Test]
+        public void TestIfAddBookWithoutGenresEnvokesAdd()
+        {
+            bookBusiness.Add(new Book() { Title = "AAA"}, null);
+
+            mockDBSetBooks.Verify(m => m.Add(It.IsAny<Book>()), Times.Once());
+            mockContext.Verify(m => m.SaveChanges(), Times.Once());
+        }
+        //[Test] do this later
+        public void TestIfAddBookWithGenresEnvokesAddGenresAndAdd()
+        {
+            bookBusiness.Add(new Book() { Title = "AAA" }, new string[] {"boi"});
+
+            mockDBSetBooks.Verify(m => m.Add(It.IsAny<Book>()), Times.Once());
+            mockContext.Verify(m => m.SaveChanges(), Times.Once());
+        }
+        [Test]
+        public void TestIfDeleteBookEnvokesRemove()
+        {
+            bookBusiness.Delete(2);
+
+            mockDBSetBooks.Verify(m => m.Remove(It.IsAny<Book>()), Times.Once());
+            mockContext.Verify(m => m.SaveChanges(), Times.Once());
+        }
+        [Test]
+        public void TestIfDeleteBookWithNullBookDoesNotInvokeRemove()
+        {
+            bookBusiness.Delete(1); //find is set up only for the book with id 2
+
+            mockDBSetBooks.Verify(m => m.Remove(It.IsAny<Book>()), Times.Never());
+        }
+        [Test]
+        public void TestIfUpdateBookEnvokesSetValues()
+        {
+            var Book = new Book() { Id = 2 };
+            bookBusiness.Update(Book, null);
+
+            mockContext.Verify(m => m.Entry(It.IsAny<Book>()).CurrentValues.SetValues(It.IsAny<Book>()), Times.Once());
+            mockContext.Verify(m => m.SaveChanges(), Times.Once());
+        }
+
     }
 
 }

@@ -85,7 +85,7 @@ namespace Library.Business
                         book.IsAvailable = false;
                         book.DateOfBorrow = DateTime.Today;
                         book.DateOfReturn = ((DateTime)(book.DateOfBorrow)).AddMonths(2); // 2 month return time ; Converting to Datetime because Datatime? doesn't have a definition of .AddMonths()
-                        bookBusiness.Update(book);
+                        bookBusiness.Update(book, null);
                     }
                     else
                         throw new Exception("Book is unavailable right now!"); // Throws an exception if someone has already borrowed the book
@@ -97,7 +97,7 @@ namespace Library.Business
         /// </summary>
         /// <param name="clientId"></param>
         /// <param name="books"></param>
-        public void ReturnBooks(int clientId, string[] books) {
+        public bool ReturnBooks(int clientId, string[] books) {
             var client = this.Get(clientId);
             using (libraryContext = generator.Generate())
             {
@@ -112,13 +112,17 @@ namespace Library.Business
                         book.IsAvailable = true;
                         book.DateOfBorrow = default;
                         book.DateOfReturn = default;
-                        bookBusiness.Update(book);
+                        bookBusiness.Update(book, null);
                     }
                     else
                         throw new Exception("Book is not borrowed by this client!"); 
                 }
                 if (client.Strikes > 3) //Deletes the client at more than 3 strikes
+                {
                     this.Delete(clientId);
+                    return true;
+                }
+                return false;
             }
         }
         /// <summary>
@@ -127,9 +131,9 @@ namespace Library.Business
         /// <param name="client"></param>
         public void Update(Client client)
         {
-            var clientOld = this.Get(client.Id);
             using (libraryContext = generator.Generate())
             {
+                var clientOld = libraryContext.Clients.Find(client.Id);
                 if (clientOld != null)
                 {
                     libraryContext.Entry(clientOld).CurrentValues.SetValues(client);
