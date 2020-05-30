@@ -57,7 +57,7 @@ namespace Library.Business
             {
                 if (genre != null)
                 {
-                    libraryContext.Genres.Remove(genre); // Once again I think this cascades.
+                    libraryContext.Genres.Remove(genre); 
                     libraryContext.SaveChanges();
                 }
             }

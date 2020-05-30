@@ -159,7 +159,7 @@ namespace Library.Business
         /// </summary>
         /// <param name="clientId"></param>
         /// <returns></returns>
-        public Book EarliestReturnDate(int clientId) //Maybe not that useful.
+        public Book EarliestReturnDate(int clientId)
         {
             List<Book> borrowedBooks = this.GetBorrowedBooks(clientId);
             using (libraryContext = generator.Generate())

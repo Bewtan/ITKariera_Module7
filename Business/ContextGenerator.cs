@@ -4,9 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Library.Data;
 
-namespace Library.Data
-{
+namespace Library.Business
+{/// <summary>
+/// Used for differantiating between mock and real contexts.
+/// </summary>
     public class ContextGenerator 
     {
         LibraryContext libraryContext;
@@ -18,7 +21,7 @@ namespace Library.Data
         }
 
         /// <summary>
-        /// Generates a new library context with the given DBSets.
+        /// Generates a new library context or uses the mock set.
         /// </summary>
         /// <returns></returns>
         public LibraryContext Generate() 

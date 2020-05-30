@@ -72,14 +72,14 @@ namespace Library.Business
         /// Deletes a book by Id.
         /// </summary>
         /// <param name="id"></param>
-        public void Delete(int id) // Unsure if the delete should be by id or title.
+        public void Delete(int id) 
         {
             using (libraryContext = generator.Generate())
             {
                 var book = libraryContext.Books.Find(id);
                 if (book != null)
                 {
-                    libraryContext.Books.Remove(book); //I think this cascades so I probably don't need to make a booksgenres delete manually.
+                    libraryContext.Books.Remove(book); 
                     libraryContext.SaveChanges();
                 }
             }
@@ -134,7 +134,7 @@ namespace Library.Business
         /// Returns all books.
         /// </summary>
         /// <returns></returns>
-        public List<Book> GetAll() //I'm not sure if we would need this, but I added it anyway.
+        public List<Book> GetAll() 
         {
             using (libraryContext= generator.Generate())
             {
@@ -148,7 +148,7 @@ namespace Library.Business
         /// </summary>
         /// <param name="title"></param>
         /// <returns></returns>
-        public bool IsAvailable(string title) //This may be rather obsolete, because Get() exists
+        public bool IsAvailable(string title)
         {
             using (libraryContext = generator.Generate())
             {
@@ -188,7 +188,7 @@ namespace Library.Business
         /// </summary>
         /// <param name="title"></param>
         /// <returns></returns>
-        public DateTime? GetReturnDate(string title)  //This may be rather obsolete, because Get() exists
+        public DateTime? GetReturnDate(string title)  
         {
             using (libraryContext = generator.Generate())
             {

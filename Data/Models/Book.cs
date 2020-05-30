@@ -12,8 +12,8 @@ namespace Library.Data.Models
         public bool IsAvailable { get; set; }
         public DateTime DateOfPublishing { get; set; }
         public string Language { get; set;}
-        public DateTime? DateOfBorrow { get; set; } //may not be needed
-        public DateTime? DateOfReturn { get; set; } //clients shouldn't be able to borrow books if return period on other books has passed 
+        public DateTime? DateOfBorrow { get; set; } 
+        public DateTime? DateOfReturn { get; set; }
         public int? ClientId { get; set; }
         public virtual Client Client { get; set; }
         public int? PublisherId { get; set; }
