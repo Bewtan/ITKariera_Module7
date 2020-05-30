@@ -114,7 +114,7 @@ namespace Library.Business
         /// </summary>
         /// <param name="book"></param>
         /// <param name="genres"></param>
-        public void AddGenres(Book book, string[] genres) // Can potentially make this public if we wanna support such functionality.
+        public void AddGenres(Book book, string[] genres)
         {
             using (libraryContext = generator.Generate())
             {

@@ -103,8 +103,11 @@ namespace Library.Business
                 foreach (string bookName in books)
                 {
                     var book = bookBusiness.Get(bookName);
-                    if (book.DateOfReturn > DateTime.Today)
+                    if (book.DateOfReturn < DateTime.Today)
+                    {
                         client.Strikes++;
+                        this.Update(client);
+                    }
                     if (book.ClientId == clientId)
                     {
                         book.ClientId = null;

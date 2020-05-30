@@ -20,7 +20,7 @@ namespace Library.Tests
         [SetUp]
         public void Setup()
         {
-            var data = new List<BooksGenres> //Books
+            var data = new List<BooksGenres> //BooksGenres
             {
                new BooksGenres {BookId = 1, GenreId = 1 },
                new BooksGenres {BookId = 1, GenreId = 2 },
@@ -87,7 +87,7 @@ namespace Library.Tests
         {
             var genres = booksGenresBusiness.GetGenres("AAA");
 
-            Assert.AreEqual(2, genres.Count, "Doesn't return correct number of books!");
+            Assert.AreEqual(2, genres.Count, "Doesn't return correct number of genres!");
             Assert.AreEqual("Genre 1", genres[0].Name, "Genre 1's name isn't equal to Genre 1");
             Assert.AreEqual("Genre 2", genres[1].Name, "Genre 1's name isn't equal to Genre 2");
         }
