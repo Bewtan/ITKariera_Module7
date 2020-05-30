@@ -15,13 +15,12 @@ namespace Library.Business
         public PublisherBusiness(LibraryContext context)
         {
             libraryContext = context;
-            generator = new ContextGenerator(context);
+            generator = new ContextGenerator(context,true);
 
         }
         public PublisherBusiness()
         {
-            libraryContext = new LibraryContext();
-            generator = new ContextGenerator(libraryContext);
+            generator = new ContextGenerator(libraryContext,false);
         }
         /// <summary>
         /// Returns a publisher by name.

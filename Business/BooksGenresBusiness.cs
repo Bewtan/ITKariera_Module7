@@ -15,12 +15,11 @@ namespace Library.Business
         public BooksGenresBusiness(LibraryContext context)
         {
             libraryContext = context;
-            generator = new ContextGenerator(context);
+            generator = new ContextGenerator(context, true);
         }
         public BooksGenresBusiness()
         {
-            libraryContext = new LibraryContext();
-            generator = new ContextGenerator(libraryContext);
+            generator = new ContextGenerator(libraryContext, false);
         }
 
         /// <summary>
@@ -33,7 +32,7 @@ namespace Library.Business
             using (libraryContext = generator.Generate())
             {
                 Genre genre = libraryContext.Genres.SingleOrDefault(genre => genre.Name == genreName);
-                List<int> bookId = libraryContext.BooksGenres.Where(booksgenre => booksgenre.Genre == genre).Select(booksgenre => booksgenre.Book.Id).ToList();
+                List<int> bookId = libraryContext.BooksGenres.Where(booksgenre => booksgenre.GenreId == genre.Id).Select(booksgenre => booksgenre.BookId).ToList();
                 return libraryContext.Books.Where(book => bookId.Contains(book.Id)).ToList();
             }
         }
@@ -47,7 +46,7 @@ namespace Library.Business
             using (libraryContext = generator.Generate())
             {
                 Book book = libraryContext.Books.SingleOrDefault(book => book.Title == title);
-                List<int> genreId = libraryContext.BooksGenres.Where(booksgenre => booksgenre.Book == book).Select(booksgenre => booksgenre.GenreId).ToList();
+                List<int> genreId = libraryContext.BooksGenres.Where(booksgenre => booksgenre.BookId == book.Id).Select(booksgenre => booksgenre.GenreId).ToList();
                 return libraryContext.Genres.Where(genre => genreId.Contains(genre.Id)).ToList();
             }
         }

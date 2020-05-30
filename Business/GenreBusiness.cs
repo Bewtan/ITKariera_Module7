@@ -14,13 +14,12 @@ namespace Library.Business
         public GenreBusiness(LibraryContext context)
         {
             libraryContext = context;
-            generator = new ContextGenerator(context);
+            generator = new ContextGenerator(context, true);
 
         }
         public GenreBusiness()
         {
-            libraryContext = new LibraryContext();
-            generator = new ContextGenerator(libraryContext);
+            generator = new ContextGenerator(libraryContext,false);
 
         }
         /// <summary>

@@ -7,30 +7,14 @@ using System.Text;
 
 namespace Library.Data
 {
-    public class ContextGenerator // I needed to do this because this is the only solution I thought in order to implent the unit tests together with using statements
+    public class ContextGenerator 
     {
-        //private DbSet<Book> books;
-        //private DbSet<Client> clients;
-        //private DbSet<Publisher> publishers;
-        //private DbSet<BooksGenres> booksGenres;
-        //private DbSet<Genre> genres;
-        private bool IsMockContext;
         LibraryContext libraryContext;
-        public ContextGenerator(LibraryContext context)
+        private bool IsMockContext;
+        public ContextGenerator(LibraryContext context, bool IsMockContext)
         {
-            //books = context.Books;
-            //clients = context.Clients;
-            //publishers = context.Publishers;
-            //booksGenres = context.BooksGenres;
-            //genres = context.Genres;
-            LibraryContext testContext = new LibraryContext();
-            if(context.Books.Count() != testContext.Books.Count())
-            {
-                IsMockContext = true;
-                libraryContext = context;
-            }
-            else
-                IsMockContext = false;
+            this.IsMockContext = IsMockContext;
+            libraryContext = context;
         }
 
         /// <summary>
@@ -42,12 +26,6 @@ namespace Library.Data
             if (IsMockContext)
             {
                 return libraryContext;
-                //libraryContext.Books = books;
-                //libraryContext.Clients = clients;
-                //libraryContext.Publishers = publishers;
-                //libraryContext.BooksGenres = booksGenres;
-                //libraryContext.Genres = genres;
-                
             }
             libraryContext = new LibraryContext();
 

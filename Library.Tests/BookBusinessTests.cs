@@ -11,7 +11,7 @@ using System.Collections.Generic;
 namespace Library.Tests
 {
     [TestFixture]
-    public class QueryTests
+    public class QueryTestsBooks
     {
         Mock<DbSet<Book>> mockDBSetBooks;
         Mock<LibraryContext> mockContext;
@@ -177,7 +177,7 @@ namespace Library.Tests
     }
 
     [TestFixture]
-    public class NonQueryTests
+    public class NonQueryTestsBooks
     {
         Mock<DbSet<Book>> mockDBSetBooks;
         Mock<LibraryContext> mockContext;
@@ -204,7 +204,7 @@ namespace Library.Tests
         }
 
         [Test]
-        public void TestIfAddBookWithoutGenresEnvokesAdd()
+        public void TestIfAddBookWithoutGenresInvokesAdd()
         {
             bookBusiness.Add(new Book() { Title = "AAA"}, null);
 
@@ -212,7 +212,7 @@ namespace Library.Tests
             mockContext.Verify(m => m.SaveChanges(), Times.Once());
         }
         //[Test] do this later
-        public void TestIfAddBookWithGenresEnvokesAddGenresAndAdd()
+        public void TestIfAddBookWithGenresInvokesAddGenresAndAdd()
         {
             bookBusiness.Add(new Book() { Title = "AAA" }, new string[] {"boi"});
 
@@ -220,7 +220,7 @@ namespace Library.Tests
             mockContext.Verify(m => m.SaveChanges(), Times.Once());
         }
         [Test]
-        public void TestIfDeleteBookEnvokesRemove()
+        public void TestIfDeleteBookInvokesRemove()
         {
             bookBusiness.Delete(2);
 
@@ -235,7 +235,7 @@ namespace Library.Tests
             mockDBSetBooks.Verify(m => m.Remove(It.IsAny<Book>()), Times.Never());
         }
         [Test]
-        public void TestIfUpdateBookEnvokesSetValues()
+        public void TestIfUpdateBookInvokesSetValues()
         {
             var Book = new Book() { Id = 2 };
             bookBusiness.Update(Book, null);
