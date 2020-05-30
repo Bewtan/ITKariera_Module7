@@ -172,7 +172,18 @@ namespace Library.Business
                 return bookWithEarliestReturnDate;
             }
         }
-       
+        /// <summary>
+        /// Returns all clients.
+        /// </summary>
+        /// <returns></returns>
+        public List<Client> GetAll()
+        {
+            using (libraryContext = generator.Generate())
+            {
+                return libraryContext.Clients.ToList();
+            }
+        }
+
 
     }
 }

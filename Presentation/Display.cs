@@ -6,7 +6,7 @@ namespace Library.Presentation
 {
     class Display
     {
-        private int closeOperationId = 4;
+        private int closeOperationId = 5;
         private void ShowMenu()
         {
             Console.WriteLine(new string('-', 40));
@@ -15,7 +15,8 @@ namespace Library.Presentation
             Console.WriteLine("1. Book Menu");
             Console.WriteLine("2. Client Menu");
             Console.WriteLine("3. Genre Menu");
-            Console.WriteLine("4. Exit");
+            Console.WriteLine("4. Publisher Menu");
+            Console.WriteLine("5. Exit");
         }
         private void Input()
         {
@@ -34,6 +35,9 @@ namespace Library.Presentation
                         break;
                     case 3:
                         CreateGenreDisplay();
+                        break;
+                    case 4:
+                        CreatePublisherDisplay();
                         break;
                     default:
                         break;
@@ -55,6 +59,10 @@ namespace Library.Presentation
         private void CreateGenreDisplay()
         {
             GenreDisplay display = new GenreDisplay();
+        }
+        private void CreatePublisherDisplay()
+        {
+            PublisherDisplay display = new PublisherDisplay();
         }
     }
 }

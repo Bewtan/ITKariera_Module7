@@ -91,5 +91,16 @@ namespace Library.Business
                 return libraryContext.Publishers.Where(publisher => publisher.CountryOfOrigin == countryOfOrigin).ToList();
             }
         }
+        /// <summary>
+        /// Returns all publishers.
+        /// </summary>
+        /// <returns></returns>
+        public List<Publisher> GetAll()
+        {
+            using (libraryContext = generator.Generate())
+            {
+                return libraryContext.Publishers.ToList();
+            }
+        }
     }
 }

@@ -9,7 +9,7 @@ namespace Library.Presentation
 {
     class ClientDisplay
     {
-        private int closeOperationId = 9;
+        private int closeOperationId = 10;
         private ClientBusiness clientBusiness;
 
         private void ShowMenu()
@@ -25,7 +25,8 @@ namespace Library.Presentation
             Console.WriteLine("6. Return Books");
             Console.WriteLine("7. Fetch borrowed Books");
             Console.WriteLine("8. Fetch earliest Return Date of Books");
-            Console.WriteLine("9. Exit");
+            Console.WriteLine("9. List all clients");
+            Console.WriteLine("10. Exit");
         }
         private void Input()
         {
@@ -59,6 +60,9 @@ namespace Library.Presentation
                         break;
                     case 8:
                         FetchEarliestReturnDateFromBorrowedBooks();
+                        break;
+                    case 9:
+                        ListAll();
                         break;
                     default:
                         break;
@@ -202,6 +206,17 @@ namespace Library.Presentation
             else
             {
                 Console.WriteLine("Client not found!");
+            }
+        }
+        private void ListAll()
+        {
+            Console.WriteLine(new string('-', 40));
+            Console.WriteLine(new string(' ', 16) + "Clients" + new string(' ', 16));
+            Console.WriteLine(new string('-', 40));
+            var clients = clientBusiness.GetAll();
+            foreach (var client in clients)
+            {
+                Console.WriteLine("{0} || {1} {2} ", client.Id, client.FirstName, client.LastName);
             }
         }
 
